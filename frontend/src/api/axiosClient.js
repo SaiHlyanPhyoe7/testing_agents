@@ -1,10 +1,11 @@
-import axios from "axios";
+import axios from 'axios'
 
 const axiosClient = axios.create({
-  baseURL: "https://api.example.com",
+  baseURL: 'https://fakestoreapi.com',
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
-});
+  timeout: 12000,
+})
 
-export default axiosClient;
+export default axiosClient
