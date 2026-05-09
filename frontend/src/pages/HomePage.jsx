@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../features/auth/authSlice.js'
-import { loadProducts } from '../features/data/dataSlice.js'
+import { loadProducts, loadMoreProducts, loadCategories, setSearchTerm, setSelectedCategory } from '../features/data/dataSlice.js'
 import { logoutRequest } from '../services/api/authService.js'
 import ProductCard from '../components/ProductCard.jsx'
 import Spinner from '../components/Spinner.jsx'
@@ -11,11 +11,12 @@ function HomePage() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { username } = useSelector((state) => state.auth)
-  const { items, status, error } = useSelector((state) => state.data)
+  const { filteredItems, categories, searchTerm, selectedCategory, status, error, hasMore } = useSelector((state) => state.data)
 
   useEffect(() => {
     if (status === 'idle') {
       dispatch(loadProducts())
+      dispatch(loadCategories())
     }
   }, [dispatch, status])
 
@@ -23,6 +24,18 @@ function HomePage() {
     logoutRequest()
     dispatch(logout())
     navigate('/login', { replace: true })
+  }
+
+  const handleSearchChange = (event) => {
+    dispatch(setSearchTerm(event.target.value))
+  }
+
+  const handleCategoryChange = (event) => {
+    dispatch(setSelectedCategory(event.target.value))
+  }
+
+  const handleLoadMore = () => {
+    dispatch(loadMoreProducts())
   }
 
   return (
@@ -56,7 +69,29 @@ function HomePage() {
           </div>
         </section>
 
-        {status === 'loading' && <Spinner />}
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="w-full rounded-3xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/30 sm:max-w-md"
+          />
+          <select
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+            className="rounded-3xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/30"
+          >
+            <option value="">All Categories</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {status === 'loading' && filteredItems.length === 0 && <Spinner />}
 
         {error && (
           <div className="rounded-3xl border border-rose-200 bg-rose-50 px-6 py-5 text-sm text-rose-700">
@@ -64,12 +99,32 @@ function HomePage() {
           </div>
         )}
 
-        {status === 'succeeded' && (
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {items.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+        {status === 'succeeded' && filteredItems.length === 0 && !error && (
+          <div className="rounded-3xl border border-slate-200 bg-white px-6 py-5 text-center text-slate-600">
+            No products found matching your criteria.
           </div>
+        )}
+
+        {filteredItems.length > 0 && (
+          <>
+            <div className="grid gap-6" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))' }}>
+              {filteredItems.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+            {hasMore && (
+              <div className="mt-8 flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleLoadMore}
+                  disabled={status === 'loading'}
+                  className="rounded-3xl bg-sky-500 px-6 py-3 text-white transition hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {status === 'loading' ? 'Loading...' : 'Load More'}
+                </button>
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>
