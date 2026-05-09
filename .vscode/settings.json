@@ -1,0 +1,16 @@
+{
+  "chat.tools.terminal.autoApprove": {
+    "npm create": true,
+    "npm install": true,
+    "npx tailwindcss": true,
+    "/^npx tailwindcss --version \\|\\| true && npm ls tailwindcss$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "/^npm install -D @tailwindcss/cli @tailwindcss/postcss && npx @tailwindcss/cli init -p$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "npm remove": true
+  }
+}
