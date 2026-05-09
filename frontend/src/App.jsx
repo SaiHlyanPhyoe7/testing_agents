@@ -1,40 +1,21 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import Counter from "./features/counter/Counter.jsx";
 import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <input
-        className="w-full max-w-md px-6 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-300 shadow-md hover:shadow-lg placeholder-gray-400 text-gray-700"
-        type="text"
-        placeholder="Enter your name"
-      />
-
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
+    <main className="mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center gap-8 bg-slate-50 px-6 py-10 text-slate-900">
+      <section className="space-y-4 rounded-[2rem] border border-slate-200 bg-white/90 p-8 shadow-xl shadow-slate-200/70">
+        <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
+          Redux Toolkit + Axios starter
+        </h1>
+        <p className="max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+          This project now includes Redux Toolkit and a reusable Axios client.
+          Use the counter below as a scaffold for your own feature slices.
         </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+      </section>
+
+      <Counter />
+    </main>
   );
 }
 
